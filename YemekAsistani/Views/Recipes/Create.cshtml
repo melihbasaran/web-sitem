@@ -1,0 +1,53 @@
+@model YemekAsistani.Models.Recipe
+
+@{
+    ViewData["Title"] = "Yeni Tarif Ekle";
+}
+
+<div class="container mt-5">
+    <h2>🍳 Yeni Yemek Tarifi Ekle</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Title" class="control-label">Yemeğin Adı</label>
+                    <input asp-for="Title" class="form-control" placeholder="Örn: Karnıyarık" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Description" class="control-label">Açıklama</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Yemeği kısaca anlat..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PrepTime" class="control-label">Hazırlama Süresi (Dk)</label>
+                        <input asp-for="PrepTime" class="form-control" />
+                        <span asp-validation-for="PrepTime" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Servings" class="control-label">Kaç Kişilik</label>
+                        <input asp-for="Servings" class="form-control" />
+                        <span asp-validation-for="Servings" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Ingredients" class="control-label">Malzemeler (Virgülle ayır)</label>
+                    <input asp-for="Ingredients" class="form-control" placeholder="Patlıcan, Kıyma, Domates..." />
+                    <span asp-validation-for="Ingredients" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mt-4">
+                    <input type="submit" value="Kaydet ve Yayınla" class="btn btn-primary btn-lg" />
+                    <a asp-action="Index" class="btn btn-secondary btn-lg">Listeye Dön</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

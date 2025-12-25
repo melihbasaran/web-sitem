@@ -1,0 +1,63 @@
+@model IEnumerable<YemekAsistani.Models.ShoppingItem>
+
+@{
+    ViewData["Title"] = "Alışveriş Listesi";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        
+        <div class="card shadow-lg border-0" style="background-color: #fff9c4; min-height: 600px;">
+            <div class="card-header bg-warning text-dark border-0 pt-4 pb-3">
+                <h2 class="fw-bold text-center"><i class="fas fa-shopping-basket"></i> Alışveriş Listesi</h2>
+                <p class="text-center mb-0 text-muted">Unutulacakları not alın, markette rahat edin.</p>
+            </div>
+            
+            <div class="card-body p-4">
+                
+                <form asp-action="Add" method="post" class="d-flex gap-2 mb-4">
+                    <input type="text" name="ItemName" class="form-control form-control-lg border-2 border-warning" placeholder="Örn: 1 Koli Yumurta..." required>
+                    <button type="submit" class="btn btn-warning btn-lg fw-bold px-4">EKLE</button>
+                </form>
+
+                @if (!Model.Any())
+                {
+                    <div class="text-center text-muted mt-5">
+                        <i class="fas fa-clipboard-check fa-4x mb-3" style="opacity: 0.3;"></i>
+                        <p>Listeniz bomboş! Eklenecek bir şey yok mu?</p>
+                    </div>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush" style="background: transparent;">
+                        @foreach (var item in Model)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-3" style="background: transparent; border-bottom: 1px dashed #999;">
+                                
+                                <a asp-action="Toggle" asp-route-id="@item.Id" class="text-decoration-none text-dark d-flex align-items-center w-100">
+                                    @if (item.IsChecked)
+                                    {
+                                        <i class="fas fa-check-square text-success fa-lg me-3"></i>
+                                        <span class="fs-5 text-muted text-decoration-line-through">@item.ItemName</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-square text-dark fa-lg me-3"></i>
+                                        <span class="fs-5 fw-bold">@item.ItemName</span>
+                                    }
+                                </a>
+
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger border-0">
+                                    <i class="fas fa-trash-alt fa-lg"></i>
+                                </a>
+
+                            </li>
+                        }
+                    </ul>
+                }
+
+            </div>
+        </div>
+
+    </div>
+</div>

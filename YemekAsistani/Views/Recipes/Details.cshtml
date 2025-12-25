@@ -1,0 +1,47 @@
+@model YemekAsistani.Models.Recipe
+
+@{ ViewData["Title"] = Model.Title; }
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header bg-success text-white p-4">
+            <h1 class="display-5 fw-bold mb-0">@Model.Title</h1>
+        </div>
+        
+        <div class="card-body p-5">
+            
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="d-flex gap-3 justify-content-center">
+                        <div class="card p-3 text-center border shadow-sm" style="min-width: 150px;">
+                            <strong class="text-success">Hazırlama</strong>
+                            <div class="fs-4">@Model.PrepTime dk</div>
+                        </div>
+                        <div class="card p-3 text-center border shadow-sm" style="min-width: 150px;">
+                            <strong class="text-success">Kaç Kişilik</strong>
+                            <div class="fs-4">@Model.Servings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="mb-5">
+                <h3 class="text-success fw-bold border-bottom pb-2">👩‍🍳 Yapılışı</h3>
+                <p class="lead mt-3" style="line-height: 1.8;">
+                    @Model.Description
+                </p>
+            </div>
+
+            <div class="bg-light p-4 rounded border">
+                <h4 class="text-success fw-bold mb-3">🛒 Malzemeler</h4>
+                <p class="fs-5 mb-0">@Model.Ingredients</p>
+            </div>
+
+            <div class="mt-4">
+                <a asp-action="Index" class="btn btn-secondary">⬅️ Listeye Dön</a>
+            </div>
+        </div>
+    </div>
+</div>

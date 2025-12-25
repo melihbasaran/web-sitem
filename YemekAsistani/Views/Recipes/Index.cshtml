@@ -1,0 +1,118 @@
+@model IEnumerable<YemekAsistani.Models.Recipe>
+
+@{ ViewData["Title"] = "Tarifler"; }
+
+<div class="text-center mb-5">
+    <h1 class="fw-bold">Yemek Asistanı</h1>
+    <p class="text-muted">Malzemeleri seç, sana uygun yemeği bulalım!</p>
+    <hr class="w-50 mx-auto">
+    <a asp-action="Create" class="btn btn-success mt-3">
+        ➕ Yeni Tarif Ekle
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        @if (!Model.Any())
+        {
+            <div class="alert alert-warning">
+                😞 Aradığın kriterlere uygun tarif bulunamadı.
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <div class="card mb-3 shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            
+                            <div class="col-md-9">
+                                <h3 class="card-title fw-bold text-dark">@item.Title</h3>
+                                
+                                <p class="card-text text-muted mb-2">
+                                    @if (item.Description.Length > 100)
+                                    {
+                                        @item.Description.Substring(0, 100) <span class="text-primary">...devamı detayda</span>
+                                    }
+                                    else
+                                    {
+                                        @item.Description
+                                    }
+                                </p>
+                                
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-light text-dark border">⏱️ @item.PrepTime dk</span>
+                                    <span class="badge bg-light text-dark border">👥 @item.Servings Kişilik</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 text-end">
+                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger me-2">
+                                    Sil 🗑️
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-dark">
+                                    Tarifi Oku ➡️
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm bg-light border-0 sticky-top" style="top: 20px;">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">🥕 Evde Neler Var?</h5>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted">Elinizdeki malzemeleri işaretleyin.</p>
+                
+                <form asp-action="Index" method="get">
+                    <h6 class="fw-bold mt-3">Kahvaltılık & Temel</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Yumurta"><label class="form-check-label">Yumurta</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Peynir"><label class="form-check-label">Peynir</label></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Süt"><label class="form-check-label">Süt</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Zeytin"><label class="form-check-label">Zeytin</label></div>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mt-3">Sebzeler</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Domates"><label class="form-check-label">Domates</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Patates"><label class="form-check-label">Patates</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Patlıcan"><label class="form-check-label">Patlıcan</label></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Soğan"><label class="form-check-label">Soğan</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Biber"><label class="form-check-label">Biber</label></div>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mt-3">Et & Bakliyat</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Kıyma"><label class="form-check-label">Kıyma</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Tavuk"><label class="form-check-label">Tavuk</label></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="malzemeler" value="Mercimek"><label class="form-check-label">Mercimek</label></div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <button type="submit" class="btn btn-dark w-100">🔍 Tarif Bul</button>
+                    <a asp-action="Index" class="btn btn-link w-100 text-decoration-none text-muted">Temizle</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

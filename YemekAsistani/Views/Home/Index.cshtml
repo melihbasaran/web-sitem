@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+<div class="text-center mb-5">
+    <h1 class="display-4 fw-bold">Mutfağımıza Hoş Geldiniz</h1>
+    <p class="lead">"Bugün ne pişirsem?" derdine son verin, eksikleri hemen not alın.</p>
+    <hr class="w-50 mx-auto" style="border-top: 2px solid #333;">
+</div>
+
+<div class="row text-center">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 p-4">
+            <div class="card-body">
+                <h3 class="card-title"><i class="fas fa-book-open"></i> Tarifler</h3>
+                <p class="card-text">Evdeki malzemelere göre yemek önerileri alın.</p>
+                <a class="btn btn-custom mt-2" asp-controller="Recipes" asp-action="Index">Tariflere Git</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 p-4">
+            <div class="card-body">
+                <h3 class="card-title"><i class="fas fa-list-check"></i> Alışveriş</h3>
+                <p class="card-text">Unutulacakları not alın, markette rahat edin.</p>
+                <a class="btn btn-custom mt-2" asp-controller="Shopping" asp-action="Index">Listeyi Gör</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 p-4">
+            <div class="card-body">
+                <h3 class="card-title"><i class="fas fa-music"></i> Müzik</h3>
+                <p class="card-text">Yemek yaparken modunuzu yakalayacak şarkılar.</p>
+                <a class="btn btn-custom mt-2" asp-controller="Home" asp-action="Musics"target="_blank">Dinlemeye Başla</a>
+            </div>
+        </div>
+    </div>
+</div>
