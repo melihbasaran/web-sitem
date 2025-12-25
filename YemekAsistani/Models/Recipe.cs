@@ -18,5 +18,6 @@ namespace YemekAsistani.Models
         public int Servings { get; set; } // Kaç Kişilik
 
         public string Ingredients { get; set; } = ""; // Malzemeler (Aramayı burada yapacağız)
+        public string? OwnerId { get; set; }
     }
 }

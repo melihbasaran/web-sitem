@@ -10,5 +10,7 @@ namespace YemekAsistani.Models
         public string ItemName { get; set; } = ""; // Alınacak ürün (Örn: Süt)
 
         public bool IsChecked { get; set; } // Alındı mı? (Tik işareti için)
+
+        public string? OwnerId { get; set; }
     }
 }

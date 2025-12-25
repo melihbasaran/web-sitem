@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YemekAsistani.Data;
 using YemekAsistani.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace YemekAsistani.Controllers
 {
@@ -9,57 +11,60 @@ namespace YemekAsistani.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        // Garson işe başlıyor: Veritabanı anahtarını (context) eline alıyor
         public RecipesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // Ana Sayfa (Listeleme ve Arama)
-// "malzemeler" parametresi, seçtiğin kutucuklardan gelen veridir.
+        // ---------------------------------------------------------
+        // HERKESİN GÖREBİLDİĞİ KISIMLAR (KİLİTSİZ)
+        // ---------------------------------------------------------
+
+        // 1. LİSTELEME VE FİLTRELEME
         public async Task<IActionResult> Index(string[] malzemeler)
         {
-            // 1. Önce bütün yemekleri veritabanından çekelim
             var recipes = await _context.Recipes.ToListAsync();
 
-            // 2. Eğer kullanıcı bir şeyler seçmişse FİLTRELEME yapalım
+            // Eğer filtre seçildiyse ona göre ele
             if (malzemeler != null && malzemeler.Length > 0)
             {
-                // Şöyle bir mantık kuruyoruz:
-                // Yemeğin malzemeleri içinde, kullanıcının seçtiği malzemelerden HERHANGİ BİRİ geçiyor mu?
                 recipes = recipes.Where(r => malzemeler.Any(secilen => r.Ingredients.Contains(secilen))).ToList();
             }
 
-            // 3. Sonuçları sayfaya gönder
             return View(recipes);
         }
-        // DETAY SAYFASI İÇİN KOD
+
+        // 2. DETAY GÖRME
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
 
-            var recipe = await _context.Recipes
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(m => m.Id == id);
             if (recipe == null) return NotFound();
 
             return View(recipe);
         }
+
         // ---------------------------------------------------------
-        // YENİ EKLENECEK KISIM: TARİF EKLEME SAYFASI (GET)
+        // 🔒 YÖNETİCİ BÖLGESİ (SADECE ADMIN)
         // ---------------------------------------------------------
+
+        // 3. YENİ EKLEME - SAYFAYI AÇAR
         public IActionResult Create()
         {
+            // KİLİT: Admin değilse ana sayfaya postala
+            if (User.Identity.Name != "admin@admin") return RedirectToAction(nameof(Index));
+            
             return View();
         }
 
-        // ---------------------------------------------------------
-        // YENİ EKLENECEK KISIM: TARİFİ KAYDETME İŞLEMİ (POST)
-        // ---------------------------------------------------------
+        // 4. YENİ EKLEME - KAYDEDER
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ImageUrl,PrepTime,Servings,Ingredients")] Recipe recipe)
         {
+            if (User.Identity.Name != "admin@admin") return RedirectToAction(nameof(Index));
+
             if (ModelState.IsValid)
             {
                 _context.Add(recipe);
@@ -68,60 +73,52 @@ namespace YemekAsistani.Controllers
             }
             return View(recipe);
         }
-        // ---------------------------------------------------------
-        // TEK TIKLA HAZIR YEMEK YÜKLEME KODU (SEEDING)
-        // ---------------------------------------------------------
-        public IActionResult HazirYemekleriYukle()
+
+        // 5. GÜNCELLEME (EDİT) - SAYFAYI AÇAR 🆕
+        public async Task<IActionResult> Edit(int? id)
         {
-            // Eğer zaten içeride yemek varsa ekleme yapma
-            if (_context.Recipes.Any())
-            {
-                return Content("Veritabanında zaten yemekler var! Tekrar eklemedim.");
-            }
-
-            // İşte hazır tarifler listesi
-            var tarif1 = new Recipe
-            {
-                Title = "Karnıyarık",
-                Description = "Patlıcan ve kıymanın efsane buluşması. Türk mutfağının vazgeçilmezi.",
-                PrepTime = 45,
-                Servings = 4,
-                Ingredients = "Patlıcan, Kıyma, Domates, Soğan, Biber"
-            };
-
-            var tarif2 = new Recipe
-            {
-                Title = "Mercimek Çorbası",
-                Description = "Kış günlerinin şifası, bol limonlu içilmesi tavsiye edilir.",
-                PrepTime = 20,
-                Servings = 6,
-                Ingredients = "Mercimek, Soğan, Havuç, Patates, Tuz"
-            };
-
-            var tarif3 = new Recipe
-            {
-                Title = "Menemen",
-                Description = "Soğanlı mı soğansız mı tartışmasını bitiren lezzet. Bekarların kral yemeği.",
-                PrepTime = 15,
-                Servings = 2,
-                Ingredients = "Yumurta, Domates, Biber, Soğan"
-            };
-
-            // Hepsini sepete at
-            _context.Recipes.AddRange(tarif1, tarif2, tarif3);
+            if (User.Identity.Name != "admin@admin") return RedirectToAction(nameof(Index)); // Kilit
             
-            // Veritabanına kaydet
-            _context.SaveChanges();
+            if (id == null) return NotFound();
 
-            return Content("✅ Başarılı! Karnıyarık, Mercimek ve Menemen veritabanına eklendi. Ana sayfaya dönebilirsin.");
+            var recipe = await _context.Recipes.FindAsync(id);
+            if (recipe == null) return NotFound();
+            
+            return View(recipe);
         }
-        // SİLME İŞLEMİ (Tek tıkla siler)
+
+        // 6. GÜNCELLEME (EDİT) - KAYDEDER 🆕
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,ImageUrl,PrepTime,Servings,Ingredients")] Recipe recipe)
+        {
+            if (User.Identity.Name != "admin@admin") return RedirectToAction(nameof(Index)); // Kilit
+
+            if (id != recipe.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(recipe);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Recipes.Any(e => e.Id == recipe.Id)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(recipe);
+        }
+
+        // 7. SİLME İŞLEMİ
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (User.Identity.Name != "admin@admin") return RedirectToAction(nameof(Index)); // Kilit
+
+            if (id == null) return NotFound();
 
             var recipe = await _context.Recipes.FindAsync(id);
             if (recipe != null)
